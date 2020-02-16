@@ -31,6 +31,7 @@ first_party_library_dependencies = [
     "//Libraries/SwiftWithMLModel:SwiftWithMLModel",
     "//Libraries/SwiftWithPrecompiledDependency:SwiftWithPrecompiledDependency",
     "//Libraries/YetAnotherSwiftModule:YetAnotherSwiftModule",
+    "//Libraries/SwiftShared:SwiftShared",
 ]
 
 prebuilt_frameworks = [
@@ -72,7 +73,7 @@ apple_library(
         "//App/Resources:StoryboardResources",
     ]
     + first_party_library_dependencies
-    + build_phase_scripts,
+    + build_phase_scripts
 )
 
 apple_binary(
@@ -118,6 +119,9 @@ apple_test_all(
     libraries = first_party_library_dependencies,
     additional_tests = app_tests,
     prebuilt_frameworks = prebuilt_frameworks,
+    deps = [
+        "//Libraries/SwiftShared:SwiftSharedFramework",
+    ],
 )
 
 xcode_workspace_config(
@@ -146,9 +150,11 @@ apple_bundle(
     info_plist = "Info.plist",
     info_plist_substitutions = info_plist_substitutions("ExampleApp"),
     deps = [
+        "//Libraries/SwiftShared:SwiftSharedFramework",
+    ] + [
         # For "#watch", https://buckbuild.com/rule/apple_bundle.html#deps
         ":ExampleWatchApp#watch",
-        ":ExampleMessageExtension"
+        ":ExampleMessageExtension",
     ]
     + prebuilt_frameworks,
 )
@@ -267,6 +273,10 @@ apple_binary(
         "-Xlinker",
         "@executable_path/../../Frameworks",
     ],
+
+    deps = [
+        "//Libraries/SwiftShared:SwiftShared",
+    ],
 )
 
 apple_bundle(
@@ -303,6 +313,7 @@ apple_test_lib(
     ]),
     deps = [
         ":ExampleAppLibrary",
+        "//Libraries/SwiftShared:SwiftSharedFramework",
     ]
     + prebuilt_frameworks,
 )
